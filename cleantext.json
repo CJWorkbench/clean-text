@@ -1,0 +1,105 @@
+{
+  "name": "Clean text",
+  "id_name": "clean-text",
+  "category" : "Clean",
+  "icon": "edit",
+  "description": "Remove unwanted characters from select columns.",
+  "parameters": [
+    {
+      "name": "In columns",
+      "id_name": "source-columns",
+      "type": "multicolumn",
+      "ui-only": true
+    },
+    {
+         "name": "Column Names",
+         "id_name": "colnames",
+         "type": "string",
+         "visible": false
+    },
+    {
+      "name": "Spaces",
+      "id_name": "type_space",
+      "type": "menu",
+      "menu_items": "Trim around value|Trim before value|Trim after value|Remove all spaces|Leave as is"
+    },
+    {
+      "name": "Condense spaces",
+      "id_name": "condense",
+      "type": "checkbox",
+      "default": "False",
+      "visible_if": {
+        "id_name": "type_space",
+        "value": "Remove all spaces",
+        "invert": true
+      }
+    },
+    {
+      "name": "Capitalization",
+      "id_name": "type_caps",
+      "type": "menu",
+      "menu_items": "Leave as is|Uppercase|Lowercase"
+    },
+    {
+      "name": "Characters",
+      "id_name": "type_char",
+      "type": "menu",
+      "menu_items": "Keep all|Drop|Keep"
+    },
+    {
+      "name": "Letters",
+      "id_name": "letter",
+      "type": "checkbox",
+      "default": "False",
+      "visible_if": {
+        "id_name": "type_char",
+        "value": "Keep all",
+        "invert": true
+      }
+    },
+    {
+      "name": "Numbers",
+      "id_name": "number",
+      "type": "checkbox",
+      "default": "False",
+      "visible_if": {
+        "id_name": "type_char",
+        "value": "Keep all",
+        "invert": true
+      }
+    },
+    {
+      "name": "Punctuation",
+      "id_name": "punc",
+      "type": "checkbox",
+      "default": "False",
+      "visible_if": {
+        "id_name": "type_char",
+        "value": "Keep all",
+        "invert": true
+      }
+    },
+    {
+      "name": "Custom",
+      "id_name": "custom",
+      "type": "checkbox",
+      "default": "False",
+      "visible_if": {
+        "id_name": "type_char",
+        "value": "Keep all",
+        "invert": true
+      }
+    },
+    {
+      "name": "",
+      "id_name": "chars",
+      "type": "string",
+      "placeholder": "%&*)",
+      "visible_if": {
+        "id_name": "type_char",
+        "value": "Keep all",
+        "invert": true
+      }
+    }
+  ]
+}
