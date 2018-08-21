@@ -125,7 +125,7 @@ def render(table, params):
                 table[col] = table[col].astype(str).map(dispatcher).astype('category')
         # Numbers need to cast as string
         elif np.issubdtype(dtype, np.number):
-            table[dtype_columns] = table[dtype_columns].astype(str).applymap(dispatcher)
+            table[dtype_columns] = table[dtype_columns].fillna('').astype(str).applymap(dispatcher)
         # Object
         else:
             table[dtype_columns] = table[dtype_columns].applymap(dispatcher)
