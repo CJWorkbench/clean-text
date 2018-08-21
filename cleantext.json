@@ -27,7 +27,7 @@
       "name": "Condense spaces",
       "id_name": "condense",
       "type": "checkbox",
-      "default": "False",
+      "default": "True",
       "visible_if": {
         "id_name": "type_space",
         "value": "Remove all spaces",
