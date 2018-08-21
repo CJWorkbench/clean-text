@@ -2,7 +2,7 @@
   "name": "Clean text",
   "id_name": "clean-text",
   "category" : "Clean",
-  "icon": "edit",
+  "icon": "clean",
   "description": "Remove unwanted characters from select columns.",
   "parameters": [
     {
