@@ -97,7 +97,7 @@
       "placeholder": "%&*)",
       "visible_if": {
         "id_name": "type_char",
-        "value": "Keep all",
+        "value": "custom",
         "invert": true
       }
     }
