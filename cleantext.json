@@ -98,7 +98,7 @@
       "visible_if": {
         "id_name": "type_char",
         "value": "custom",
-        "invert": true
+        "invert": false
       }
     }
   ]
