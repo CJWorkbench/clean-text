@@ -70,7 +70,7 @@ class TestCleanText(unittest.TestCase):
         out = render(self.table.copy(), params)
         ref = self.table.copy()
         ref['spacecol'] = pd.Series(
-            ['\t  hello world', 'hello world', '\thello world', 'hello world', ' \x09   hello world'])
+            [' hello world', 'hello world', ' hello world', 'hello world', ' hello world'])
         pd.testing.assert_frame_equal(out, ref)
 
         # Trim Before and condense False
@@ -208,6 +208,42 @@ class TestCleanText(unittest.TestCase):
         out = render(out, params)
         for y in out['spacecol']:
             self.assertTrue(y == 'hello world')
+
+    def test_multi_char(self):
+        params = {'colnames': 'catcol,spacecol',
+                  'type_space': space_map.index('remove all spaces'),
+                  'type_caps': caps_map.index('leave as is'),
+                  'type_char': char_map.index('keep'),
+                  'letter': True,
+                  'number': True,
+                  'punc': False,
+                  'custom': False,
+                  'chars': ''}
+
+        out = render(self.table.copy(), params)
+        for y in out['catcol']:
+            self.assertTrue(y == '2001')
+
+        for y in out['spacecol']:
+            self.assertTrue(y == 'helloworld')
+
+        params = {'colnames': 'catcol,spacecol',
+                  'type_space': space_map.index('remove all spaces'),
+                  'type_caps': caps_map.index('leave as is'),
+                  'type_char': char_map.index('drop'),
+                  'letter': False,
+                  'number': False,
+                  'punc': True,
+                  'custom': False,
+                  'chars': ''}
+
+        out = render(self.table.copy(), params)
+        for y in out['catcol']:
+            self.assertTrue(y == '2001')
+
+        for y in out['spacecol']:
+            self.assertTrue(y == 'helloworld')
+
 
     def test_null(self):
         # null result
