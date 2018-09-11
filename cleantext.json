@@ -4,6 +4,7 @@
   "category" : "Clean",
   "icon": "clean",
   "description": "Remove unwanted characters from select columns.",
+  "help_url":"modules/clean/clean-text",
   "parameters": [
     {
       "name": "In columns",
