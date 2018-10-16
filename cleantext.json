@@ -46,7 +46,7 @@
       "id_name": "type_char",
       "type": "menu",
       "menu_items": "Keep all|Delete|Keep",
-      "default": 1
+      "default": "1"
     },
     {
       "name": "Letters",
