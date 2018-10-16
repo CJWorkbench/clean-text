@@ -51,25 +51,25 @@
       "name": "Letters",
       "id_name": "letter",
       "type": "checkbox",
-      "default": "True"
+      "default": "False"
     },
     {
       "name": "Numbers",
       "id_name": "number",
       "type": "checkbox",
-      "default": "True"
+      "default": "False"
     },
     {
       "name": "Punctuation",
       "id_name": "punc",
       "type": "checkbox",
-      "default": "True"
+      "default": "False"
     },
     {
       "name": "Custom",
       "id_name": "custom",
       "type": "checkbox",
-      "default": "True"
+      "default": "False"
     },
     {
       "name": "",
