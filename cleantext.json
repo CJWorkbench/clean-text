@@ -45,51 +45,31 @@
       "name": "Characters",
       "id_name": "type_char",
       "type": "menu",
-      "menu_items": "Keep all|Drop|Keep"
+      "menu_items": "Keep all|Delete|Keep"
     },
     {
       "name": "Letters",
       "id_name": "letter",
       "type": "checkbox",
-      "default": "False",
-      "visible_if": {
-        "id_name": "type_char",
-        "value": "Keep all",
-        "invert": true
-      }
+      "default": "True"
     },
     {
       "name": "Numbers",
       "id_name": "number",
       "type": "checkbox",
-      "default": "False",
-      "visible_if": {
-        "id_name": "type_char",
-        "value": "Keep all",
-        "invert": true
-      }
+      "default": "True"
     },
     {
       "name": "Punctuation",
       "id_name": "punc",
       "type": "checkbox",
-      "default": "False",
-      "visible_if": {
-        "id_name": "type_char",
-        "value": "Keep all",
-        "invert": true
-      }
+      "default": "True"
     },
     {
       "name": "Custom",
       "id_name": "custom",
       "type": "checkbox",
-      "default": "False",
-      "visible_if": {
-        "id_name": "type_char",
-        "value": "Keep all",
-        "invert": true
-      }
+      "default": "True"
     },
     {
       "name": "",
