@@ -13,10 +13,10 @@
       "ui-only": true
     },
     {
-         "name": "Column Names",
-         "id_name": "colnames",
-         "type": "string",
-         "visible": false
+      "name": "Column Names",
+      "id_name": "colnames",
+      "type": "string",
+      "visible": false
     },
     {
       "name": "Spaces",
@@ -78,8 +78,8 @@
       "type": "string",
       "placeholder": "%&*)",
       "visible_if": {
-          "id_name": "custom",
-          "value": true
+        "id_name": "custom",
+        "value": true
       }
     }
   ]
