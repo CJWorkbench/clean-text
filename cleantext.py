@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import re
 
 m_map = {
     'type_space':   'Trim around value|Trim before value|Trim after value|Remove all spaces|Leave as is'.lower().split('|'),
@@ -14,26 +15,29 @@ c_map = {
 
 # Define characters by regex
 unicode_cat_map = {
-    'number':   '\d',
-    'letter':   '^\W\d_',
+    'number': r'\d',
+    'letter': r'^\W\d_',
     'punc':     '!-#%-*,-/:-;?-@[-\]_{}¡«·»¿;·՚-՟։-֊־׀׃׆׳-״؉-؊،-؍؛؞-؟٪-٭۔܀-܍߷-߹।-॥' \
                 '॰෴๏๚-๛༄-༒༺-༽྅࿐-࿔၊-၏჻፡-፨᙭-᙮᚛-᚜᛫-᛭᜵-᜶។-៖៘-៚᠀-᠊᥄-᥅᧞-᧟᨞-᨟᭚-᭠᰻-᰿᱾-᱿\u2000-\u206e' \
                 '⁽-⁾₍-₎〈-〉❨-❵⟅-⟆⟦-⟯⦃-⦘⧘-⧛⧼-⧽⳹-⳼⳾-⳿⸀-\u2e7e\u3000-〾゠・꘍-꘏꙳꙾꡴-꡷꣎-꣏꤮-꤯꥟꩜-꩟﴾-﴿︐-︙︰-﹒﹔' \
                 '-﹡﹣﹨﹪-﹫！-＃％-＊，-／：-；？-＠［-］＿｛｝｟-･'
+
 }
 
 space_regex_map = {
-    'trim before value':    '^[\s]+',
-    'trim after value':     '[\s]+$',
-    'trim around value':    '^[\s]+|[\s]+$',
-    'remove all spaces':    '[\s]'
+    'trim before value': r'^[\s]+',
+    'trim after value': r'[\s]+$',
+    'trim around value': r'^[\s]+|[\s]+$',
+    'remove all spaces': r'[\s]'
 }
 
-def change_case(type, table):
-    if type == 'uppercase':
-        return table.str.upper()
-    elif type == 'lowercase':
-        return table.str.lower()
+
+def change_case(case, series):
+    if case == 'uppercase':
+        return series.str.upper()
+    elif case == 'lowercase':
+        return series.str.lower()
+
 
 def build_regex(type, char_cats, char_custom):
     # Keep spaces in all scenarios
@@ -48,21 +52,26 @@ def build_regex(type, char_cats, char_custom):
         return re.compile('|'.join(pattern_list), re.UNICODE)
     else:
         # Keep spaces in all scenarios
-        pattern = '(?!\s)'
-        # To drop all else, set char regex in negative lookahead then drop all else [\d\D]
+        pattern = r'(?!\s)'
+        # To drop all else, set char regex in negative lookahead then drop all
+        # else [\d\D]
         if char_cats:
             for char in char_cats:
                 pattern += f'(?![{char}])'
         if char_custom:
-            for char in char_custom:
-                pattern += f'(?![{"".join([re.escape(c) for c in char_custom])}])'
-        pattern += f'[\d\D]'
+            escaped = ''.join([re.escape(c) for c in char_custom])
+            pattern += f'(?![{escaped}])'
+        pattern += r'[\d\D]'
         return re.compile(pattern, re.UNICODE)
+
 
 # Get the unicode categories in scope per input parameters
 def get_unicode_categories(char_params):
-    category_types = [unicode_cat_map[key] for key, value in char_params['categories'].items() if value]
+    category_types = [unicode_cat_map[key]
+                      for key, value in char_params['categories'].items()
+                      if value]
     return category_types if category_types else None
+
 
 def dispatch(space_params, type_caps, series, pattern=None):
     if pattern:
@@ -74,6 +83,7 @@ def dispatch(space_params, type_caps, series, pattern=None):
     if type_caps != 'leave as is':
         series = change_case(type_caps, series)
     return series
+
 
 def render(table, params):
     # No processing if parameters define no change
@@ -94,7 +104,10 @@ def render(table, params):
     type_caps = m_map['type_caps'][params['type_caps']]
 
     # Conditional Parameters
-    space_params['condense'] = params['condense'] if space_params['type'] != c_map['type_space'] else False
+    if space_params['type'] != c_map['type_space']:
+        space_params['condense'] = params['condense']
+    else:
+        space_params['condense'] = False
 
     for char_cat in unicode_cat_map.keys():
         if char_params['type'] != c_map['type_char']:
@@ -107,32 +120,30 @@ def render(table, params):
             char_params['type'] != c_map['type_char'] and params['custom']
     ) else None
 
-
     # If not keep/drop params, skip
     if char_params['type'] != 'keep all' and (char_params['char_cats'] or char_params['char_custom']):
-        pattern = build_regex(char_params['type'], char_params['char_cats'], char_params['char_custom'])
+        pattern = build_regex(char_params['type'], char_params['char_cats'],
+                              char_params['char_custom'])
     else:
         pattern = None
 
-
     for column in columns:
-        # For now, re-categorize after replace. Can improve performance by operating
-        # directly on categorical index, if needed
-        if table[column].dtype.name == 'category':
-            table[column] = prep_cat(table[column])
-            table[column] = dispatch(space_params, type_caps, table[column].astype(str), pattern).astype('category')
-        # Numbers need to cast as string
-        elif np.issubdtype(table[column].dtype, np.number):
-            table[column] = dispatch(space_params, type_caps, table[column].fillna('').astype(str), pattern)
-        # Object
-        else:
-            table[column] = dispatch(space_params, type_caps, table[column], pattern)
+        series = table[column]
+
+        try:
+            series.str
+        except AttributeError:
+            # Not a string column; skip it
+            continue
+
+        new_series = dispatch(space_params, type_caps, series, pattern)
+        try:
+            series.cat  # input was categorical; give categorical output
+            new_series = new_series.astype('category')
+        except AttributeError:
+            # input was str, not categorical -- and so is new_series
+            pass
+
+        table[column] = new_series
 
     return table
-
-def prep_cat(series):
-    if '' not in series.cat.categories:
-        series.cat.add_categories('', inplace=True)
-    if any(series.isna()):
-            series.fillna('', inplace=True)
-    return series
