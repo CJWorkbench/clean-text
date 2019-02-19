@@ -21,7 +21,7 @@
       "name": "Condense spaces",
       "id_name": "condense",
       "type": "checkbox",
-      "default": "True",
+      "default": True,
       "visible_if": {
         "id_name": "type_space",
         "value": "Remove all spaces",
@@ -45,25 +45,25 @@
       "name": "Letters",
       "id_name": "letter",
       "type": "checkbox",
-      "default": "False"
+      "default": False
     },
     {
       "name": "Numbers",
       "id_name": "number",
       "type": "checkbox",
-      "default": "False"
+      "default": False
     },
     {
       "name": "Punctuation",
       "id_name": "punc",
       "type": "checkbox",
-      "default": "False"
+      "default": False
     },
     {
       "name": "Custom",
       "id_name": "custom",
       "type": "checkbox",
-      "default": "False"
+      "default": False
     },
     {
       "name": "",
