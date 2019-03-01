@@ -2,19 +2,14 @@ import datetime
 import unittest
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from cleantext import render
-
-space_map = 'Trim around value|Trim before value|Trim after value|Remove all spaces|Leave as is'.lower().split('|')
-caps_map  = 'Leave as is|Uppercase|Lowercase'.lower().split('|')
-char_map = 'Keep all|Drop|Keep'.lower().split('|')
-
+from cleantext import render, migrate_params
 
 DefaultParams = {
     'colnames': '',
-    'type_space': 0,
+    'type_space': 'trim_around',
     'condense': False,
-    'type_caps': 0,
-    'type_char': 0,
+    'type_caps': 'nop',
+    'type_char': 'nop',
     'letter': False,
     'number': False,
     'punc': False,
@@ -41,49 +36,49 @@ class TestCleanText(unittest.TestCase):
         self.table['nullcol'] = self.table['nullcol'].astype('category')
 
     def test_NOP(self):
+        # should NOP when first applied; no column selected
         params = {'colnames': '',
-                  'type_space': space_map.index('trim around value'),
+                  'type_space': 'trim_around',
                   'condense': True,
-                  'type_caps': caps_map.index('leave as is'),
-                  'type_char': char_map.index('keep all')}
+                  'type_caps': 'nop',
+                  'type_char': 'nop'}
         out = render(self.table, params)
-        # should NOP when first applied
         self.assertTrue(out.equals(self.table))
 
     def test_NOP_leave_all_as_is(self):
         params = {'colnames': 'spacecol',
-                  'type_space': space_map.index('leave as is'),
-                  'type_caps': caps_map.index('leave as is'),
-                  'type_char': char_map.index('keep all')}
+                  'type_space': 'nop',
+                  'type_caps': 'nop',
+                  'type_char': 'nop'}
         out = render(self.table, params)
         self.assertTrue(out.equals(self.table))
 
     def test_spaces(self):
         # spacecol should only contain 'helloworld'
         params = {'colnames': 'spacecol',
-                  'type_space': space_map.index('remove all spaces'),
-                  'type_caps': caps_map.index('leave as is'),
-                  'type_char': char_map.index('keep all')}
+                  'type_space': 'remove_all',
+                  'type_caps': 'nop',
+                  'type_char': 'nop'}
         out = render(self.table.copy(), params)
         for y in out['spacecol']:
             self.assertEqual(y, 'helloworld')
 
         # Test condense
         params = {'colnames': 'spacecol',
-                  'type_space': space_map.index('trim around value'),
+                  'type_space': 'trim_around',
                   'condense': True,
-                  'type_caps': caps_map.index('leave as is'),
-                  'type_char': char_map.index('keep all')}
+                  'type_caps': 'nop',
+                  'type_char': 'nop'}
         out = render(self.table.copy(), params)
         for y in out['spacecol']:
             self.assertEqual(y, 'hello world')
 
         # Trim After
         params = {'colnames': 'spacecol',
-                  'type_space': space_map.index('trim after value'),
+                  'type_space': 'trim_after',
                   'condense': True,
-                  'type_caps': caps_map.index('leave as is'),
-                  'type_char': char_map.index('keep all')}
+                  'type_caps': 'nop',
+                  'type_char': 'nop'}
 
         out = render(self.table.copy(), params)
         ref = self.table.copy()
@@ -98,10 +93,10 @@ class TestCleanText(unittest.TestCase):
 
         # Trim Before and condense False
         params = {'colnames': 'spacecol',
-                  'type_space': space_map.index('trim before value'),
+                  'type_space': 'trim_before',
                   'condense': False,
-                  'type_caps': caps_map.index('leave as is'),
-                  'type_char': char_map.index('keep all')}
+                  'type_caps': 'nop',
+                  'type_char': 'nop'}
 
         out = render(self.table.copy(), params)
         ref = self.table.copy()
@@ -117,9 +112,9 @@ class TestCleanText(unittest.TestCase):
     def test_letters(self):
         # Keep letters and uppercase
         params = {'colnames': 'special',
-                  'type_space': space_map.index('remove all spaces'),
-                  'type_caps': caps_map.index('uppercase'),
-                  'type_char': char_map.index('keep'),
+                  'type_space': 'remove_all',
+                  'type_caps': 'upper',
+                  'type_char': 'keep',
                   'letter': True,
                   'number': False,
                   'punc': False,
@@ -132,7 +127,7 @@ class TestCleanText(unittest.TestCase):
             ['CAFÉ', '谢谢你', 'HELLOWORLD', 'ÀÇÑ', 'ÆÏ'])
         pd.testing.assert_frame_equal(out, ref)
 
-        params['type_caps'] = caps_map.index('lowercase')
+        params['type_caps'] = 'lower'
         out = render(self.table.copy(), params)
         ref['special'] = pd.Series(
             ['café', '谢谢你', 'helloworld', 'àçñ', 'æï'])
@@ -141,10 +136,10 @@ class TestCleanText(unittest.TestCase):
     def test_custom(self):
         # space should only contain 'heo word'
         params = {'colnames': 'spacecol',
-                  'type_space': space_map.index('trim around value'),
+                  'type_space': 'trim_around',
                   'condense': True,
-                  'type_caps': caps_map.index('leave as is'),
-                  'type_char': char_map.index('drop'),
+                  'type_caps': 'nop',
+                  'type_char': 'drop',
                   'letter': False,
                   'number': False,
                   'punc': False,
@@ -157,9 +152,9 @@ class TestCleanText(unittest.TestCase):
 
         # space should only contain 'heo word'
         params = {'colnames': 'floatcol',
-                  'type_space': space_map.index('remove all spaces'),
-                  'type_caps': caps_map.index('leave as is'),
-                  'type_char': char_map.index('drop'),
+                  'type_space': 'remove_all',
+                  'type_caps': 'nop',
+                  'type_char': 'drop',
                   'letter': False,
                   'number': False,
                   'punc': False,
@@ -179,8 +174,8 @@ class TestCleanText(unittest.TestCase):
         result = render(df, {
             **DefaultParams,
             'colnames': 'A',
-            'type_space': space_map.index('remove all spaces'),
-            'type_char': char_map.index('drop'),
+            'type_space': 'remove_all',
+            'type_char': 'drop',
             'letter': False,
             'number': False,
             'punc': True,
@@ -196,25 +191,25 @@ class TestCleanText(unittest.TestCase):
     def test_case(self):
         # 'HELLO WORLD'
         params = {'colnames': 'spacecol',
-                  'type_space': space_map.index('trim around value'),
+                  'type_space': 'trim_around',
                   'condense': True,
-                  'type_caps': caps_map.index('uppercase'),
-                  'type_char': char_map.index('keep all')}
+                  'type_caps': 'upper',
+                  'type_char': 'nop'}
         out = render(self.table.copy(), params)
         for y in out['spacecol']:
             self.assertEqual(y, 'HELLO WORLD')
 
         # 'hello world'
-        params['type_caps'] = caps_map.index('lowercase')
+        params['type_caps'] = 'lower'
         out = render(out, params)
         for y in out['spacecol']:
             self.assertEqual(y, 'hello world')
 
     def test_multi_char_keep(self):
         params = {'colnames': 'catcol,spacecol',
-                  'type_space': space_map.index('remove all spaces'),
-                  'type_caps': caps_map.index('leave as is'),
-                  'type_char': char_map.index('keep'),
+                  'type_space': 'remove_all',
+                  'type_caps': 'nop',
+                  'type_char': 'keep',
                   'letter': True,
                   'number': True,
                   'punc': False,
@@ -230,9 +225,9 @@ class TestCleanText(unittest.TestCase):
 
     def test_multi_char_drop(self):
         params = {'colnames': 'catcol,spacecol',
-                  'type_space': space_map.index('remove all spaces'),
-                  'type_caps': caps_map.index('leave as is'),
-                  'type_char': char_map.index('drop'),
+                  'type_space': 'remove_all',
+                  'type_caps': 'nop',
+                  'type_char': 'drop',
                   'letter': False,
                   'number': False,
                   'punc': True,
@@ -249,9 +244,9 @@ class TestCleanText(unittest.TestCase):
     def test_null(self):
         # null result
         params = {'colnames': 'nullcol',
-                  'type_space': space_map.index('remove all spaces'),
-                  'type_caps': caps_map.index('uppercase'),
-                  'type_char': char_map.index('drop'),
+                  'type_space': 'remove_all',
+                  'type_caps': 'upper',
+                  'type_char': 'drop',
                   'letter': False,
                   'number': False,
                   'punc': False,
@@ -277,6 +272,22 @@ class TestCleanText(unittest.TestCase):
             'colnames': 'A',
         })
         assert_frame_equal(result, pd.DataFrame({'A': [dt, dt]}))
+
+    def test_migrate_v0_to_v1(self):
+        params = {'colnames': 'floatcol',
+                  'type_space': 3,
+                  'type_caps': 2,
+                  'type_char': 1,
+                  'letter': False,
+                  'number': False,
+                  'punc': False,
+                  'custom': True,
+                  'chars': '23a.'}
+
+        new_params = migrate_params(params)
+        self.assertEqual(new_params['type_space'], 'remove_all')
+        self.assertEqual(new_params['type_caps'], 'lower')
+        self.assertEqual(new_params['type_char'], 'delete')
 
 if __name__ == '__main__':
     unittest.main()

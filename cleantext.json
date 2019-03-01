@@ -15,7 +15,14 @@
       "name": "Spaces",
       "id_name": "type_space",
       "type": "menu",
-      "menu_items": "Trim around value|Trim before value|Trim after value|Remove all spaces|Leave as is"
+      "options": [
+        { "value": "trim_around", "label": "Trim around value" },
+        { "value": "trim_before", "label": "Trim before value" },
+        { "value": "trim_after", "label": "Trim after value" },
+        { "value": "remove_all", "label": "Remove all spaces" },
+        { "value": "nop", "label": "Leave as is" }
+      ],
+      "default": "trim_around"
     },
     {
       "name": "Condense spaces",
@@ -24,7 +31,7 @@
       "default": true,
       "visible_if": {
         "id_name": "type_space",
-        "value": "Remove all spaces",
+        "value": ["remove_all"],
         "invert": true
       }
     },
@@ -32,14 +39,23 @@
       "name": "Capitalization",
       "id_name": "type_caps",
       "type": "menu",
-      "menu_items": "Leave as is|Uppercase|Lowercase"
+      "options": [
+        { "value":"nop", "label":"Leave as is" },
+        { "value":"upper", "label":"Uppercase" },
+        { "value":"lower", "label":"Lowercase" }
+      ],
+      "default": "nop"
     },
     {
       "name": "Characters",
       "id_name": "type_char",
       "type": "menu",
-      "menu_items": "Keep all|Delete|Keep",
-      "default": 1
+      "options": [
+        { "value":"nop", "label":"Keep all" },
+        { "value":"delete", "label":"Delete" },
+        { "value":"keep", "label":"Keep" }
+      ],
+      "default": "delete"
     },
     {
       "name": "Letters",
