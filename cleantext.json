@@ -51,7 +51,7 @@
       "id_name": "type_char",
       "type": "menu",
       "options": [
-        { "value":"nop", "label":"Keep all" },
+        { "value":"nop", "label":"Leave as is" },
         { "value":"delete", "label":"Delete" },
         { "value":"keep", "label":"Keep" }
       ],
