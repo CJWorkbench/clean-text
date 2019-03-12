@@ -34,11 +34,28 @@ def _migrate_params_v0_to_v1(params):
 
     return params
 
+def _migrate_params_v1_to_v2(params):
+    if params['type_char'] == 'keep':
+        params['type_char'] = True
+    elif params['type_char'] == 'delete':
+        params['type_char'] = False
+    else:
+        # v2 represents 'nop' by deleting nothing
+        params['type_char'] = False
+        params['letter'] = False
+        params['number'] = False
+        params['punc'] = False
+        params['custom'] = False
+
+    return params
 
 def migrate_params(params):
     # Convert numeric menu parameters to string labels, if needed
     if isinstance(params['type_space'], int):
         params = _migrate_params_v0_to_v1(params)
+
+    if isinstance(params['type_char'], str):
+        params = _migrate_params_v1_to_v2(params)
 
     return params
 
@@ -52,7 +69,10 @@ def change_case(case, series):
 
 
 def build_regex(type, char_cats, char_custom):
-    # Keep spaces in all scenarios
+    print('--- BUILD ---')
+    print(type)
+    print(char_cats)
+    print(char_custom)
     pattern_list = []
     if type == 'delete':
         if char_cats:
@@ -75,14 +95,6 @@ def build_regex(type, char_cats, char_custom):
             pattern += f'(?![{escaped}])'
         pattern += r'[\d\D]'
         return re.compile(pattern, re.UNICODE)
-
-
-# Get the unicode categories in scope per input parameters
-def get_unicode_categories(char_params):
-    category_types = [unicode_cat_map[key]
-                      for key, value in char_params['categories'].items()
-                      if value]
-    return category_types if category_types else None
 
 
 def dispatch(space_params, type_caps, series, pattern=None):
@@ -109,34 +121,31 @@ def render(table, params):
     space_params = {
         'type': params['type_space']
     }
-    char_params = {
-        'type': params['type_char'],
-        'categories': {}
-    }
+
     type_caps = params['type_caps']
 
-    # Conditional Parameters
+    # Space trimming
     if space_params['type'] != 'remove_all':
         space_params['condense'] = params['condense']
     else:
         space_params['condense'] = False
 
+    # Build a set of unicode strings representing chosen character classes
+    char_cats = []
     for char_cat in unicode_cat_map.keys():
-        if char_params['type'] != 'nop':
-            char_params['categories'][char_cat] = params[char_cat]
-        else:
-            char_params['categories'][char_cat] = False
+        if params[char_cat]:
+            char_cats.append(unicode_cat_map[char_cat])
 
-    char_params['char_cats'] = get_unicode_categories(char_params)
-    if char_params['type'] != 'nop' and params['custom']:
-        char_params['char_custom'] = set(params['chars'])
+    if  params['custom']:
+        char_custom = set(params['chars'])
     else:
-        char_params['char_custom'] = None
+        char_custom = None
 
-    # If not keep/drop params, skip
-    if char_params['type'] != 'nop' and (char_params['char_cats'] or char_params['char_custom']):
-        pattern = build_regex(char_params['type'], char_params['char_cats'],
-                              char_params['char_custom'])
+    # Are we modifying the set of characters in any way? Answer is no only if
+    # we are deleting nothing
+    keep_delete = 'keep' if params['type_char'] else 'delete'
+    if keep_delete == 'keep' or char_cats or char_custom:
+        pattern = build_regex(keep_delete, char_cats, char_custom)
     else:
         pattern = None
 

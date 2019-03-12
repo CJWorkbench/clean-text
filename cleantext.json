@@ -48,15 +48,9 @@
     },
     {
       "name": "Characters",
-      "id_name": "type_char",
-      "type": "menu",
-      "options": [
-        { "value":"nop", "label":"Leave as is" },
-        { "value":"delete", "label":"Delete" },
-        { "value":"keep", "label":"Keep" }
-      ],
-      "default": "delete"
-    },
+      "id_name": "type_char_label",
+      "type":"statictext"
+    },  
     {
       "name": "Letters",
       "id_name": "letter",
@@ -90,6 +84,16 @@
         "id_name": "custom",
         "value": true
       }
+    },
+    {
+      "name": "Characters",
+      "id_name": "type_char",
+      "type": "radio",
+      "options": [
+        { "value":true, "label":"Keep" },
+        { "value":false, "label":"Delete" }
+      ],
+      "default": false
     }
   ]
 }

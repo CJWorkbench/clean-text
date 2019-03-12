@@ -9,7 +9,7 @@ DefaultParams = {
     'type_space': 'trim_around',
     'condense': False,
     'type_caps': 'nop',
-    'type_char': 'nop',
+    'type_char': False,  # keep/delete, false means delete
     'letter': False,
     'number': False,
     'punc': False,
@@ -37,48 +37,38 @@ class TestCleanText(unittest.TestCase):
 
     def test_NOP(self):
         # should NOP when first applied; no column selected
-        params = {'colnames': '',
-                  'type_space': 'trim_around',
-                  'condense': True,
-                  'type_caps': 'nop',
-                  'type_char': 'nop'}
-        out = render(self.table, params)
+        out = render(self.table, DefaultParams)
         self.assertTrue(out.equals(self.table))
 
     def test_NOP_leave_all_as_is(self):
-        params = {'colnames': 'spacecol',
-                  'type_space': 'nop',
-                  'type_caps': 'nop',
-                  'type_char': 'nop'}
+        params = {**DefaultParams,
+                  'colnames': 'spacecol'}
         out = render(self.table, params)
         self.assertTrue(out.equals(self.table))
 
     def test_spaces(self):
         # spacecol should only contain 'helloworld'
-        params = {'colnames': 'spacecol',
-                  'type_space': 'remove_all',
-                  'type_caps': 'nop',
-                  'type_char': 'nop'}
+        params = {**DefaultParams,
+                  'colnames': 'spacecol',
+                  'type_space': 'remove_all'}
         out = render(self.table.copy(), params)
         for y in out['spacecol']:
             self.assertEqual(y, 'helloworld')
 
         # Test condense
-        params = {'colnames': 'spacecol',
+        params = {**DefaultParams,
+                  'colnames': 'spacecol',
                   'type_space': 'trim_around',
-                  'condense': True,
-                  'type_caps': 'nop',
-                  'type_char': 'nop'}
+                  'condense': True }
         out = render(self.table.copy(), params)
         for y in out['spacecol']:
             self.assertEqual(y, 'hello world')
 
         # Trim After
-        params = {'colnames': 'spacecol',
+        params = {**DefaultParams,
+                  'colnames': 'spacecol',
                   'type_space': 'trim_after',
-                  'condense': True,
-                  'type_caps': 'nop',
-                  'type_char': 'nop'}
+                  'condense': True }
 
         out = render(self.table.copy(), params)
         ref = self.table.copy()
@@ -92,11 +82,10 @@ class TestCleanText(unittest.TestCase):
         pd.testing.assert_frame_equal(out, ref)
 
         # Trim Before and condense False
-        params = {'colnames': 'spacecol',
+        params = {**DefaultParams,
+                  'colnames': 'spacecol',
                   'type_space': 'trim_before',
-                  'condense': False,
-                  'type_caps': 'nop',
-                  'type_char': 'nop'}
+                  'condense': False }
 
         out = render(self.table.copy(), params)
         ref = self.table.copy()
@@ -111,10 +100,11 @@ class TestCleanText(unittest.TestCase):
 
     def test_letters(self):
         # Keep letters and uppercase
-        params = {'colnames': 'special',
+        params = {**DefaultParams,
+                  'colnames': 'special',
                   'type_space': 'remove_all',
                   'type_caps': 'upper',
-                  'type_char': 'keep',
+                  'type_char': True,  # keep
                   'letter': True,
                   'number': False,
                   'punc': False,
@@ -135,11 +125,12 @@ class TestCleanText(unittest.TestCase):
 
     def test_custom(self):
         # space should only contain 'heo word'
-        params = {'colnames': 'spacecol',
+        params = {**DefaultParams,
+                  'colnames': 'spacecol',
                   'type_space': 'trim_around',
                   'condense': True,
                   'type_caps': 'nop',
-                  'type_char': 'delete',
+                  'type_char': False, # delete
                   'letter': False,
                   'number': False,
                   'punc': False,
@@ -151,10 +142,11 @@ class TestCleanText(unittest.TestCase):
             self.assertEqual(y, 'heo word')
 
         # space should only contain 'heo word'
-        params = {'colnames': 'floatcol',
+        params = {**DefaultParams,
+                  'colnames': 'floatcol',
                   'type_space': 'remove_all',
                   'type_caps': 'nop',
-                  'type_char': 'delete',
+                  'type_char': False, # delete
                   'letter': False,
                   'number': False,
                   'punc': False,
@@ -175,7 +167,7 @@ class TestCleanText(unittest.TestCase):
             **DefaultParams,
             'colnames': 'A',
             'type_space': 'remove_all',
-            'type_char': 'delete',
+            'type_char': False, # delete
             'letter': False,
             'number': False,
             'punc': True,
@@ -190,11 +182,12 @@ class TestCleanText(unittest.TestCase):
 
     def test_case(self):
         # 'HELLO WORLD'
-        params = {'colnames': 'spacecol',
+        params = {**DefaultParams,
+                  'colnames': 'spacecol',
                   'type_space': 'trim_around',
                   'condense': True,
-                  'type_caps': 'upper',
-                  'type_char': 'nop'}
+                  'type_caps': 'upper'}
+                  
         out = render(self.table.copy(), params)
         for y in out['spacecol']:
             self.assertEqual(y, 'HELLO WORLD')
@@ -206,10 +199,11 @@ class TestCleanText(unittest.TestCase):
             self.assertEqual(y, 'hello world')
 
     def test_multi_char_keep(self):
-        params = {'colnames': 'catcol,spacecol',
+        params = {**DefaultParams,
+                  'colnames': 'catcol,spacecol',
                   'type_space': 'remove_all',
                   'type_caps': 'nop',
-                  'type_char': 'keep',
+                  'type_char': True,  # keep
                   'letter': True,
                   'number': True,
                   'punc': False,
@@ -224,10 +218,11 @@ class TestCleanText(unittest.TestCase):
             self.assertEqual(y, 'helloworld')
 
     def test_multi_char_drop(self):
-        params = {'colnames': 'catcol,spacecol',
+        params = {**DefaultParams,
+                  'colnames': 'catcol,spacecol',
                   'type_space': 'remove_all',
                   'type_caps': 'nop',
-                  'type_char': 'delete',
+                  'type_char': False, # delete
                   'letter': False,
                   'number': False,
                   'punc': True,
@@ -241,12 +236,27 @@ class TestCleanText(unittest.TestCase):
         for y in out['spacecol']:
             self.assertEqual(y, 'helloworld')
 
-    def test_null(self):
-        # null result
-        params = {'colnames': 'nullcol',
+    def test_delete_nothing(self):
+        # should be a NOP
+        params = {**DefaultParams,
+                  'colnames': 'special',
+                  'type_space': 'nop',
+                  'type_caps': 'nop',
+                  'type_char': False, # delete
+                  'letter': False,
+                  'number': False,
+                  'punc': False,
+                  'custom': False,
+                  'chars': ''}
+        out = render(self.table.copy(), params)
+        assert_frame_equal(out, self.table)
+
+    def test_null_input_and_output(self):
+        params = {**DefaultParams,
+                  'colnames': 'nullcol',
                   'type_space': 'remove_all',
                   'type_caps': 'upper',
-                  'type_char': 'delete',
+                  'type_char': False, # delete
                   'letter': False,
                   'number': False,
                   'punc': False,
@@ -273,7 +283,7 @@ class TestCleanText(unittest.TestCase):
         })
         assert_frame_equal(result, pd.DataFrame({'A': [dt, dt]}))
 
-    def test_migrate_v0_to_v1(self):
+    def test_migrate_v0_to_v2(self):
         params = {'colnames': 'floatcol',
                   'type_space': 3,
                   'type_caps': 2,
@@ -287,7 +297,27 @@ class TestCleanText(unittest.TestCase):
         new_params = migrate_params(params)
         self.assertEqual(new_params['type_space'], 'remove_all')
         self.assertEqual(new_params['type_caps'], 'lower')
-        self.assertEqual(new_params['type_char'], 'delete')
+        self.assertEqual(new_params['type_char'], False) # delete
+
+    def test_migrate_v1_to_v2(self):
+        # v2 is uses radio button keep/delete so only True/False 
+        # Migration translates NOP to delete w/ with nothing selected
+        params = {'colnames': 'floatcol',
+                  'type_space': 'nop',
+                  'type_caps': 'nop',
+                  'type_char': 'nop',
+                  'letter': True,
+                  'number': False,
+                  'punc': False,
+                  'custom': True,
+                  'chars': '23a.'}
+
+        new_params = migrate_params(params)
+        self.assertEqual(new_params['type_char'], False) # delete
+        self.assertFalse(new_params['letter'])
+        self.assertFalse(new_params['number'])
+        self.assertFalse(new_params['punc'])
+        self.assertFalse(new_params['custom'])
 
 if __name__ == '__main__':
     unittest.main()
