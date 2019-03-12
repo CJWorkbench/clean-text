@@ -54,7 +54,7 @@ def change_case(case, series):
 def build_regex(type, char_cats, char_custom):
     # Keep spaces in all scenarios
     pattern_list = []
-    if type == 'drop':
+    if type == 'delete':
         if char_cats:
             for char in char_cats:
                 pattern_list.append(f'[{char}]')
