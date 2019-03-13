@@ -69,10 +69,6 @@ def change_case(case, series):
 
 
 def build_regex(type, char_cats, char_custom):
-    print('--- BUILD ---')
-    print(type)
-    print(char_cats)
-    print(char_custom)
     pattern_list = []
     if type == 'delete':
         if char_cats:
