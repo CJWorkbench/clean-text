@@ -75,8 +75,7 @@ def build_regex(type, char_cats, char_custom):
             for char in char_cats:
                 pattern_list.append(f'[{char}]')
         if char_custom:
-            for char in char_custom:
-                pattern_list.append(f'[{char}]')
+            pattern_list.append(f'[{re.escape(char_custom)}]')
         return re.compile('|'.join(pattern_list), re.UNICODE)
     else:
         # Keep spaces in all scenarios
@@ -87,7 +86,7 @@ def build_regex(type, char_cats, char_custom):
             for char in char_cats:
                 pattern += f'(?![{char}])'
         if char_custom:
-            escaped = ''.join([re.escape(c) for c in char_custom])
+            escaped = re.escape(char_custom)
             pattern += f'(?![{escaped}])'
         pattern += r'[\d\D]'
         return re.compile(pattern, re.UNICODE)
@@ -133,7 +132,7 @@ def render(table, params):
             char_cats.append(unicode_cat_map[char_cat])
 
     if  params['custom']:
-        char_custom = set(params['chars'])
+        char_custom = params['chars']
     else:
         char_custom = None
 
