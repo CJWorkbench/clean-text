@@ -19,7 +19,6 @@ DefaultParams = {
 
 
 class TestCleanText(unittest.TestCase):
-
     def setUp(self):
         # Individual Cases
         self.table = pd.DataFrame([
@@ -156,6 +155,17 @@ class TestCleanText(unittest.TestCase):
         out = render(self.table.copy(), params)
         for y in out['floatcol']:
             self.assertEqual(y, '1')
+
+    def test_custom_special_regex_characters(self):
+        df = pd.DataFrame({'A': ['John, Marshall, Jr.']})
+        result = render(df, {
+            **DefaultParams,
+            'colnames': 'A',
+            'custom': True,
+            'chars': r',\sJr.',  # "\" and "s" are two characters, not regex
+            'type_char': False,
+        })
+        assert_frame_equal(result, pd.DataFrame({'A': ['ohn Mahall']}))
 
     def test_punc(self):
         df = pd.DataFrame({
