@@ -57,13 +57,22 @@ def _migrate_params_v1_to_v2(params):
         }
 
 
+def _migrate_params_v2_to_v3(params):
+    """v2: colnames are comma-separated str; v3: List[str]."""
+    return {
+        **params,
+        'colnames': [c for c in params['colnames'].split(',') if c],
+    }
+
+
 def migrate_params(params):
     # Convert numeric menu parameters to string labels, if needed
     if isinstance(params['type_space'], int):
         params = _migrate_params_v0_to_v1(params)
-
     if isinstance(params['type_char'], str):
         params = _migrate_params_v1_to_v2(params)
+    if isinstance(params['colnames'], str):
+        params = _migrate_params_v2_to_v3(params)
 
     return params
 
@@ -120,7 +129,6 @@ def render(table, params):
             and params['type_char'] == 'nop'):
         return table
 
-    columns = [c.strip() for c in params['colnames'].split(',')]
     space_params = {
         'type': params['type_space']
     }
@@ -152,12 +160,13 @@ def render(table, params):
     else:
         pattern = None
 
-    for column in columns:
+    for column in params['colnames']:
         series = table[column]
         new_series = dispatch(space_params, type_caps, series, pattern)
 
         if hasattr(series, 'cat'):
             # input was categorical; give categorical output
+            # TODO clean the categories instead. (It's a mind-bender.)
             new_series = new_series.astype('category')
 
         table[column] = new_series

@@ -6,7 +6,7 @@ from pandas.testing import assert_frame_equal
 from cleantext import render, migrate_params
 
 DefaultParams = {
-    'colnames': '',
+    'colnames': [],
     'type_space': 'trim_around',
     'condense': False,
     'type_caps': 'nop',
@@ -35,27 +35,27 @@ class TestCleanText(unittest.TestCase):
 
     def test_space_nop(self):
         result = render(pd.DataFrame({'A': [' x', ' y']}),
-                        P(colnames='A', type_space='nop'))
+                        P(colnames=['A'], type_space='nop'))
         assert_frame_equal(result, pd.DataFrame({'A': [' x', ' y']}))
 
     def test_space_remove_all(self):
         result = render(pd.DataFrame({
             'A': ['\t \x09a \x0a b     \r', np.nan, ' ', 'x'],
-        }), P(colnames='A', type_space='remove_all'))
+        }), P(colnames=['A'], type_space='remove_all'))
         assert_frame_equal(result,
                            pd.DataFrame({'A': ['ab', np.nan, '', 'x']}))
 
     def test_space_trim_around(self):
         result = render(pd.DataFrame({
             'A': ['\t \ta \n b     \r', np.nan, ' ', 'x'],
-        }), P(colnames='A', type_space='trim_around'))
+        }), P(colnames=['A'], type_space='trim_around'))
         assert_frame_equal(result,
                            pd.DataFrame({'A': ['a \n b', np.nan, '', 'x']}))
 
     def test_space_trim_after(self):
         result = render(pd.DataFrame({
             'A': ['\t \ta \n b     \r', np.nan, ' ', 'x'],
-        }), P(colnames='A', type_space='trim_after'))
+        }), P(colnames=['A'], type_space='trim_after'))
         assert_frame_equal(
             result,
             pd.DataFrame({'A': ['\t \ta \n b', np.nan, '', 'x']})
@@ -64,7 +64,7 @@ class TestCleanText(unittest.TestCase):
     def test_space_trim_before(self):
         result = render(pd.DataFrame({
             'A': ['\t \ta \n b  \r', np.nan, ' ', 'x'],
-        }), P(colnames='A', type_space='trim_before'))
+        }), P(colnames=['A'], type_space='trim_before'))
         assert_frame_equal(
             result,
             pd.DataFrame({'A': ['a \n b  \r', np.nan, '', 'x']})
@@ -73,7 +73,7 @@ class TestCleanText(unittest.TestCase):
     def test_condense(self):
         result = render(pd.DataFrame({
             'A': ['\t \ta \n b     \r', np.nan, ' ', 'x'],
-        }), P(colnames='A', type_space='nop', condense=True))
+        }), P(colnames=['A'], type_space='nop', condense=True))
         assert_frame_equal(result,
                            pd.DataFrame({'A': [' a b ', np.nan, ' ', 'x']}))
 
@@ -82,7 +82,7 @@ class TestCleanText(unittest.TestCase):
             'A': ['café', '\t..谢 谢 你123    ', '\x0Chello©world', 'àçñ',
                   ' Æ !@!@! Ï ']
         }),
-            P(colnames='A', type_space='remove_all', type_caps='upper',
+            P(colnames=['A'], type_space='remove_all', type_caps='upper',
               type_char=True, letter=True)
         )
         assert_frame_equal(result, pd.DataFrame({
@@ -94,7 +94,7 @@ class TestCleanText(unittest.TestCase):
             'A': ['café', '\t..谢 谢 你123    ', '\x0Chello©world', 'àçñ',
                   ' Æ !@!@! Ï ']
         }),
-            P(colnames='A', type_space='remove_all', type_caps='lower',
+            P(colnames=['A'], type_space='remove_all', type_caps='lower',
               type_char=True, letter=True)
         )
         assert_frame_equal(result, pd.DataFrame({
@@ -104,13 +104,13 @@ class TestCleanText(unittest.TestCase):
     def test_delete_custom(self):
         result = render(pd.DataFrame({
             'A': ['hello', 'world', np.nan],
-        }), P(colnames='A', type_char=False, custom=True, chars='lo'))
+        }), P(colnames=['A'], type_char=False, custom=True, chars='lo'))
         assert_frame_equal(result, pd.DataFrame({'A': ['he', 'wrd', np.nan]}))
 
     def test_custom_special_regex_characters(self):
         table = pd.DataFrame({'A': ['John, Marshall, Jr.']})
         result = render(table, P(
-            colnames='A',
+            colnames=['A'],
             custom=True,
             type_char=False,  # delete
             chars=r',\sJr.',  # "\" and "s" are two characters, not regex
@@ -125,7 +125,7 @@ class TestCleanText(unittest.TestCase):
 
         result = render(df, {
             **DefaultParams,
-            'colnames': 'A',
+            'colnames': ['A'],
             'type_space': 'remove_all',
             'type_char': False, # delete
             'letter': False,
@@ -144,7 +144,7 @@ class TestCleanText(unittest.TestCase):
         result = render(pd.DataFrame({
             'A': ['2.0', 'café', '@hey-yo'],
         }), P(
-            colnames='A',
+            colnames=['A'],
             type_space='nop',
             type_char=True,  # keep
             letter=True,
@@ -159,7 +159,7 @@ class TestCleanText(unittest.TestCase):
         result = render(pd.DataFrame({
             'A': ['2.0', 'café', '@hey, yo'],
         }), P(
-            colnames='A',
+            colnames=['A'],
             type_space='nop',
             type_char=False,  # delete
             letter=False,
@@ -175,7 +175,7 @@ class TestCleanText(unittest.TestCase):
         result = render(pd.DataFrame({
             'A': ['2.0', 'café', '@hey, yo'],
         }), P(
-            colnames='A',
+            colnames=['A'],
             type_space='nop',
             type_char=False,  # delete
             letter=False,
@@ -190,7 +190,7 @@ class TestCleanText(unittest.TestCase):
         result = render(
             pd.DataFrame({'A': [' x', 'x ', ' x ', 'y', np.nan]},
                          dtype='category'),
-            P(colnames='A', type_space='remove_all')
+            P(colnames=['A'], type_space='remove_all')
         )
         assert_frame_equal(
             result,
@@ -211,7 +211,7 @@ class MigrateParamsTest(unittest.TestCase):
             'custom': True,
             'chars': '23a.'
         }), {
-            'colnames': 'floatcol',
+            'colnames': ['floatcol'],
             'type_space': 'remove_all',
             'type_caps': 'lower',
             'type_char': False,
@@ -222,7 +222,7 @@ class MigrateParamsTest(unittest.TestCase):
             'chars': '23a.'
         })
 
-    def test_migrate_v1(self):
+    def test_migrate_v1_type_char_nop(self):
         # v2 is uses radio button keep/delete so only True/False 
         # Migration translates NOP to delete w/ with nothing selected
         self.assertEqual(migrate_params({
@@ -236,7 +236,7 @@ class MigrateParamsTest(unittest.TestCase):
             'custom': True,
             'chars': '23a.'
         }), {
-            'colnames': 'floatcol',
+            'colnames': ['floatcol'],
             'type_space': 'nop',
             'type_caps': 'nop',
             'type_char': False,  # delete
@@ -245,6 +245,78 @@ class MigrateParamsTest(unittest.TestCase):
             'number': False,
             'punc': False,
             'custom': False,
+            'chars': '23a.'
+        })
+
+    def test_migrate_v1(self):
+        # v2 is uses radio button keep/delete so only True/False 
+        # Migration translates NOP to delete w/ with nothing selected
+        self.assertEqual(migrate_params({
+            'colnames': 'floatcol',
+            'type_space': 'nop',
+            'type_caps': 'nop',
+            'type_char': 'delete',  # v1: obsolete option, means "delete nothing"
+            'letter': True,
+            'number': False,
+            'punc': False,
+            'custom': True,
+            'chars': '23a.'
+        }), {
+            'colnames': ['floatcol'],
+            'type_space': 'nop',
+            'type_caps': 'nop',
+            'type_char': False,  # delete
+            # these shouldn't be modified
+            'letter': True,
+            'number': False,
+            'punc': False,
+            'custom': True,
+            'chars': '23a.'
+        })
+
+    def test_migrate_v2_no_colnames(self):
+        self.assertEqual(migrate_params({
+            'colnames': '',  # v2: colnames are comma-separated str
+            'type_space': 'nop',
+            'type_caps': 'nop',
+            'type_char': False,
+            'letter': True,
+            'number': False,
+            'punc': False,
+            'custom': True,
+            'chars': '23a.'
+        }), {
+            'colnames': [],
+            'type_space': 'nop',
+            'type_caps': 'nop',
+            'type_char': False,
+            'letter': True,
+            'number': False,
+            'punc': False,
+            'custom': True,
+            'chars': '23a.'
+        })
+
+    def test_migrate_v2(self):
+        self.assertEqual(migrate_params({
+            'colnames': 'A,B',  # v2: colnames are comma-separated str
+            'type_space': 'nop',
+            'type_caps': 'nop',
+            'type_char': False,
+            'letter': True,
+            'number': False,
+            'punc': False,
+            'custom': True,
+            'chars': '23a.'
+        }), {
+            'colnames': ['A', 'B'],
+            'type_space': 'nop',
+            'type_caps': 'nop',
+            'type_char': False,
+            'letter': True,
+            'number': False,
+            'punc': False,
+            'custom': True,
             'chars': '23a.'
         })
 
