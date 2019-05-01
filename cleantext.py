@@ -22,32 +22,40 @@ space_regex_map = {
 
 
 def _migrate_params_v0_to_v1(params):
-    # v0: menu item indices. v1: menu item labels
-    v1_space_items = ['trim_around','trim_before','trim_after','remove_all','nop']
-    params['type_space'] = v1_space_items[params['type_space']]
-
+    """v0: menus use item indices. v1: menus use values."""
+    v1_space_items = ['trim_around', 'trim_before', 'trim_after', 'remove_all',
+                      'nop']
     v1_caps_items = ['nop','upper','lower']
-    params['type_caps'] = v1_caps_items[params['type_caps']]
-
     v1_char_items = ['nop','delete','keep']
-    params['type_char'] = v1_char_items[params['type_char']]
-
-    return params
+    return {
+        **params,
+        'type_space': v1_space_items[params['type_space']],
+        'type_caps': v1_caps_items[params['type_caps']],
+        'type_char': v1_char_items[params['type_char']],
+    }
 
 def _migrate_params_v1_to_v2(params):
-    if params['type_char'] == 'keep':
-        params['type_char'] = True
-    elif params['type_char'] == 'delete':
-        params['type_char'] = False
-    else:
-        # v2 represents 'nop' by deleting nothing
-        params['type_char'] = False
-        params['letter'] = False
-        params['number'] = False
-        params['punc'] = False
-        params['custom'] = False
+    """
+    v1: type_char is menu and 'nop' is an option.
 
-    return params
+    v2: there is no 'nop'. Migrate to "delete nothing" (synonym).
+    """
+    if params['type_char'] == 'nop':
+        # v2 represents 'nop' by deleting nothing
+        return {
+            **params,
+            'type_char': False,
+            'letter': False,
+            'number': False,
+            'punc': False,
+            'custom': False,
+        }
+    else:
+        return {
+            **params,
+            'type_char': params['type_char'] == 'keep'
+        }
+
 
 def migrate_params(params):
     # Convert numeric menu parameters to string labels, if needed

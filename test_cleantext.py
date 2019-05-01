@@ -293,41 +293,57 @@ class TestCleanText(unittest.TestCase):
         })
         assert_frame_equal(result, pd.DataFrame({'A': [dt, dt]}))
 
-    def test_migrate_v0_to_v2(self):
-        params = {'colnames': 'floatcol',
-                  'type_space': 3,
-                  'type_caps': 2,
-                  'type_char': 1,
-                  'letter': False,
-                  'number': False,
-                  'punc': False,
-                  'custom': True,
-                  'chars': '23a.'}
 
-        new_params = migrate_params(params)
-        self.assertEqual(new_params['type_space'], 'remove_all')
-        self.assertEqual(new_params['type_caps'], 'lower')
-        self.assertEqual(new_params['type_char'], False) # delete
+class MigrateParamsTest(unittest.TestCase):
+    def test_migrate_v0(self):
+        self.assertEqual(migrate_params({
+            'colnames': 'floatcol',
+            'type_space': 3,  # v0: old-style menu
+            'type_caps': 2,  # v0: old-style menu
+            'type_char': 1,  # v0: old-style menu
+            'letter': False,
+            'number': False,
+            'punc': False,
+            'custom': True,
+            'chars': '23a.'
+        }), {
+            'colnames': 'floatcol',
+            'type_space': 'remove_all',
+            'type_caps': 'lower',
+            'type_char': False,
+            'letter': False,
+            'number': False,
+            'punc': False,
+            'custom': True,
+            'chars': '23a.'
+        })
 
-    def test_migrate_v1_to_v2(self):
+    def test_migrate_v1(self):
         # v2 is uses radio button keep/delete so only True/False 
         # Migration translates NOP to delete w/ with nothing selected
-        params = {'colnames': 'floatcol',
-                  'type_space': 'nop',
-                  'type_caps': 'nop',
-                  'type_char': 'nop',
-                  'letter': True,
-                  'number': False,
-                  'punc': False,
-                  'custom': True,
-                  'chars': '23a.'}
+        self.assertEqual(migrate_params({
+            'colnames': 'floatcol',
+            'type_space': 'nop',
+            'type_caps': 'nop',
+            'type_char': 'nop',  # v1: obsolete option, means "delete nothing"
+            'letter': True,
+            'number': False,
+            'punc': False,
+            'custom': True,
+            'chars': '23a.'
+        }), {
+            'colnames': 'floatcol',
+            'type_space': 'nop',
+            'type_caps': 'nop',
+            'type_char': False,  # delete
+            # letter/number/punc/custom all empty
+            'letter': False,
+            'number': False,
+            'punc': False,
+            'custom': False,
+            'chars': '23a.'
+        })
 
-        new_params = migrate_params(params)
-        self.assertEqual(new_params['type_char'], False) # delete
-        self.assertFalse(new_params['letter'])
-        self.assertFalse(new_params['number'])
-        self.assertFalse(new_params['punc'])
-        self.assertFalse(new_params['custom'])
 
 if __name__ == '__main__':
     unittest.main()
