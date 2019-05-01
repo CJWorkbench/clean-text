@@ -9,7 +9,8 @@
     {
       "name": "",
       "id_name": "colnames",
-      "type": "multicolumn"
+      "type": "multicolumn",
+      "column_types": [ "text" ]
     },
     {
       "name": "Spaces",

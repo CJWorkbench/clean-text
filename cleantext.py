@@ -139,7 +139,7 @@ def render(table, params):
         if params[char_cat]:
             char_cats.append(unicode_cat_map[char_cat])
 
-    if  params['custom']:
+    if params['custom']:
         char_custom = params['chars']
     else:
         char_custom = None
@@ -154,21 +154,11 @@ def render(table, params):
 
     for column in columns:
         series = table[column]
-
-        try:
-            series.str
-        except AttributeError:
-            # Not a string column; skip it
-            continue
-
         new_series = dispatch(space_params, type_caps, series, pattern)
 
-        try:
-            series.cat  # input was categorical; give categorical output
+        if hasattr(series, 'cat'):
+            # input was categorical; give categorical output
             new_series = new_series.astype('category')
-        except AttributeError:
-            # input was str, not categorical -- and so is new_series
-            pass
 
         table[column] = new_series
 
