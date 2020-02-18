@@ -1,0 +1,87 @@
+# Greek translations for PROJECT.
+# Copyright (C) 2020 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2020-02-18 15:10+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: el\n"
+"Language-Team: el <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+
+msgid "_spec.name"
+msgstr "Καθάρισμα κειμένου"
+
+msgid "_spec.description"
+msgstr "Αφαίρεση ανεπιθύμητων χαρακτήρων από επιλεγμένες στήλες."
+
+msgid "_spec.parameters.type_space.name"
+msgstr "Κενά διαστήματα"
+
+msgid "_spec.parameters.type_space.options.trim_around.label"
+msgstr "Αφαίρεση κενών γύρω από την τιμή"
+
+msgid "_spec.parameters.type_space.options.trim_before.label"
+msgstr "Αφαίρεση κενών πριν την τιμή"
+
+msgid "_spec.parameters.type_space.options.trim_after.label"
+msgstr "Αφαίρεση κενών μετά την τιμή"
+
+msgid "_spec.parameters.type_space.options.remove_all.label"
+msgstr "Αφαίρεση όλων των κενών"
+
+msgid "_spec.parameters.type_space.options.nop.label"
+msgstr "Να μείνει όπως είναι"
+
+msgid "_spec.parameters.condense.name"
+msgstr "Σύμπτυξη κενών"
+
+msgid "_spec.parameters.type_caps.name"
+msgstr "Μετατροπή σε κεφαλαία"
+
+msgid "_spec.parameters.type_caps.options.nop.label"
+msgstr "Να μείνει όπως είναι"
+
+msgid "_spec.parameters.type_caps.options.upper.label"
+msgstr "Κεφαλαία"
+
+msgid "_spec.parameters.type_caps.options.lower.label"
+msgstr "Πεζά"
+
+msgid "_spec.parameters.type_char_label.name"
+msgstr "Χαρακτήρες"
+
+msgid "_spec.parameters.letter.name"
+msgstr "Γράμματα"
+
+msgid "_spec.parameters.number.name"
+msgstr "Αριθμοί"
+
+msgid "_spec.parameters.punc.name"
+msgstr "Σημεία στίξης"
+
+msgid "_spec.parameters.custom.name"
+msgstr "Προσαρμοσμένο"
+
+msgid "_spec.parameters.chars.placeholder"
+msgstr "%&*)"
+
+msgid "_spec.parameters.type_char.name"
+msgstr "Χαρακτήρες"
+
+msgid "_spec.parameters.type_char.options.True.label"
+msgstr "Διατήρηση"
+
+msgid "_spec.parameters.type_char.options.False.label"
+msgstr "Διαγραφή"
+

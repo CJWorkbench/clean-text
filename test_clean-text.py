@@ -3,7 +3,10 @@ import unittest
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from cleantext import render, migrate_params
+import importlib
+
+render = importlib.import_module("clean-text").render
+migrate_params = importlib.import_module("clean-text").migrate_params
 
 DefaultParams = {
     'colnames': [],

@@ -1,0 +1,88 @@
+#. default-message: Clean text
+msgid "_spec.name"
+msgstr ""
+
+#. default-message: Remove unwanted characters from select columns.
+msgid "_spec.description"
+msgstr ""
+
+#. default-message: Spaces
+msgid "_spec.parameters.type_space.name"
+msgstr ""
+
+#. default-message: Trim around value
+msgid "_spec.parameters.type_space.options.trim_around.label"
+msgstr ""
+
+#. default-message: Trim before value
+msgid "_spec.parameters.type_space.options.trim_before.label"
+msgstr ""
+
+#. default-message: Trim after value
+msgid "_spec.parameters.type_space.options.trim_after.label"
+msgstr ""
+
+#. default-message: Remove all spaces
+msgid "_spec.parameters.type_space.options.remove_all.label"
+msgstr ""
+
+#. default-message: Leave as is
+msgid "_spec.parameters.type_space.options.nop.label"
+msgstr ""
+
+#. default-message: Condense spaces
+msgid "_spec.parameters.condense.name"
+msgstr ""
+
+#. default-message: Capitalization
+msgid "_spec.parameters.type_caps.name"
+msgstr ""
+
+#. default-message: Leave as is
+msgid "_spec.parameters.type_caps.options.nop.label"
+msgstr ""
+
+#. default-message: Uppercase
+msgid "_spec.parameters.type_caps.options.upper.label"
+msgstr ""
+
+#. default-message: Lowercase
+msgid "_spec.parameters.type_caps.options.lower.label"
+msgstr ""
+
+#. default-message: Characters
+msgid "_spec.parameters.type_char_label.name"
+msgstr ""
+
+#. default-message: Letters
+msgid "_spec.parameters.letter.name"
+msgstr ""
+
+#. default-message: Numbers
+msgid "_spec.parameters.number.name"
+msgstr ""
+
+#. default-message: Punctuation
+msgid "_spec.parameters.punc.name"
+msgstr ""
+
+#. default-message: Custom
+msgid "_spec.parameters.custom.name"
+msgstr ""
+
+#. default-message: %&*)
+msgid "_spec.parameters.chars.placeholder"
+msgstr ""
+
+#. default-message: Characters
+msgid "_spec.parameters.type_char.name"
+msgstr ""
+
+#. default-message: Keep
+msgid "_spec.parameters.type_char.options.True.label"
+msgstr ""
+
+#. default-message: Delete
+msgid "_spec.parameters.type_char.options.False.label"
+msgstr ""
+

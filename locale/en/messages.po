@@ -1,0 +1,87 @@
+# English translations for PROJECT.
+# Copyright (C) 2020 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2020-01-07 06:44+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.7.0\n"
+
+msgid "_spec.name"
+msgstr "Clean text"
+
+msgid "_spec.description"
+msgstr "Remove unwanted characters from select columns."
+
+msgid "_spec.parameters.type_space.name"
+msgstr "Spaces"
+
+msgid "_spec.parameters.type_space.options.trim_around.label"
+msgstr "Trim around value"
+
+msgid "_spec.parameters.type_space.options.trim_before.label"
+msgstr "Trim before value"
+
+msgid "_spec.parameters.type_space.options.trim_after.label"
+msgstr "Trim after value"
+
+msgid "_spec.parameters.type_space.options.remove_all.label"
+msgstr "Remove all spaces"
+
+msgid "_spec.parameters.type_space.options.nop.label"
+msgstr "Leave as is"
+
+msgid "_spec.parameters.condense.name"
+msgstr "Condense spaces"
+
+msgid "_spec.parameters.type_caps.name"
+msgstr "Capitalization"
+
+msgid "_spec.parameters.type_caps.options.nop.label"
+msgstr "Leave as is"
+
+msgid "_spec.parameters.type_caps.options.upper.label"
+msgstr "Uppercase"
+
+msgid "_spec.parameters.type_caps.options.lower.label"
+msgstr "Lowercase"
+
+msgid "_spec.parameters.type_char_label.name"
+msgstr "Characters"
+
+msgid "_spec.parameters.letter.name"
+msgstr "Letters"
+
+msgid "_spec.parameters.number.name"
+msgstr "Numbers"
+
+msgid "_spec.parameters.punc.name"
+msgstr "Punctuation"
+
+msgid "_spec.parameters.custom.name"
+msgstr "Custom"
+
+msgid "_spec.parameters.chars.placeholder"
+msgstr "%&*)"
+
+msgid "_spec.parameters.type_char.name"
+msgstr "Characters"
+
+msgid "_spec.parameters.type_char.options.True.label"
+msgstr "Keep"
+
+msgid "_spec.parameters.type_char.options.False.label"
+msgstr "Delete"
+
