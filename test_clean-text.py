@@ -157,11 +157,7 @@ class TestCleanText(unittest.TestCase):
 
     def test_delete_custom(self):
         result = render(
-            pd.DataFrame(
-                {
-                    "A": ["hello", "world", np.nan],
-                }
-            ),
+            pd.DataFrame({"A": ["hello", "world", None]}),
             P(colnames=["A"], type_char=False, custom=True, chars="lo"),
         )
         assert_frame_equal(result, pd.DataFrame({"A": ["he", "wrd", np.nan]}))

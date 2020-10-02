@@ -1,24 +1,19 @@
 # -*- coding: utf-8 -*-
-import re
+import re2
 
 
 # Define characters by regex
 unicode_cat_map = {
     "number": r"\d",
-    "letter": r"^\W\d_",
-    "punc": (
-        "!-#%-*,-/:-;?-@[-\]_{}¡«·»¿;·՚-՟։-֊־׀׃׆׳-״؉-؊،-؍؛؞-؟٪-٭۔܀-܍߷-߹।-॥"
-        "॰෴๏๚-๛༄-༒༺-༽྅࿐-࿔၊-၏჻፡-፨᙭-᙮᚛-᚜᛫-᛭᜵-᜶។-៖៘-៚᠀-᠊᥄-᥅᧞-᧟᨞-᨟᭚-᭠᰻-᰿᱾-᱿\u2000-\u206e"
-        "⁽-⁾₍-₎〈-〉❨-❵⟅-⟆⟦-⟯⦃-⦘⧘-⧛⧼-⧽⳹-⳼⳾-⳿⸀-\u2e7e\u3000-〾゠・꘍-꘏꙳꙾꡴-꡷꣎-꣏꤮-꤯꥟꩜-꩟﴾-﴿︐-︙︰-﹒﹔"
-        "-﹡﹣﹨﹪-﹫！-＃％-＊，-／：-；？-＠［-］＿｛｝｟-･",
-    ),
+    "letter": r"\pL_",
+    "punc": r"\pP",
 }
 
 space_regex_map = {
-    "trim_before": r"^[\s]+",
-    "trim_after": r"[\s]+$",
-    "trim_around": r"^[\s]+|[\s]+$",
-    "remove_all": r"[\s]",
+    "trim_before": r"^\s+",
+    "trim_after": r"\s+$",
+    "trim_around": r"^\s+|\s+$",
+    "remove_all": r"\s+",
 }
 
 
@@ -83,36 +78,29 @@ def change_case(case, series):
 
 
 def build_regex(type, char_cats, char_custom):
+    """Build regex matching any character to _delete_ from the input."""
     pattern_list = []
-    if type == "delete":
-        if char_cats:
-            for char in char_cats:
-                pattern_list.append(f"[{char}]")
-        if char_custom:
-            pattern_list.append(f"[{re.escape(char_custom)}]")
-        return re.compile("|".join(pattern_list), re.UNICODE)
+    if type == "keep":
+        # \\s: Keep spaces in all scenarios
+        return re2.compile(f"[^\\s{''.join(char_cats)}{re2.escape(char_custom)}]+")
     else:
-        # Keep spaces in all scenarios
-        pattern = r"(?!\s)"
-        # To drop all else, set char regex in negative lookahead then drop all
-        # else [\d\D]
-        if char_cats:
-            for char in char_cats:
-                pattern += f"(?![{char}])"
-        if char_custom:
-            escaped = re.escape(char_custom)
-            pattern += f"(?![{escaped}])"
-        pattern += r"[\d\D]"
-        return re.compile(pattern, re.UNICODE)
+        return re2.compile(f"[{''.join(char_cats)}{re2.escape(char_custom)}]+")
 
 
 def dispatch(space_params, type_caps, series, pattern=None):
     if pattern:
-        series = series.str.replace(pattern, "")
+
+        def drop_chars_matched_by_pattern(value):
+            if value is None:
+                return value
+            else:
+                return pattern.sub("", value)
+
+        series = series.apply(drop_chars_matched_by_pattern, convert_dtype=False)
     if space_params["type"] != "nop":
         series = series.str.replace(space_regex_map[space_params["type"]], "")
     if space_params["condense"]:
-        series = series.str.replace(r"[\s]+", " ")
+        series = series.str.replace(r"\s+", " ")
     if type_caps != "nop":
         series = change_case(type_caps, series)
 
@@ -147,7 +135,7 @@ def render(table, params):
     if params["custom"]:
         char_custom = params["chars"]
     else:
-        char_custom = None
+        char_custom = ""
 
     # Are we modifying the set of characters in any way? Answer is no only if
     # we are deleting nothing
