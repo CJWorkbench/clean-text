@@ -1,6 +1,6 @@
 To run unit tests:
 
 ```
-pip3 install --user google-re2==0.0.5 pytest pandas
+pip3 install --user built-google-re2~=0.0.7 pytest pandas
 pytest
 ```
